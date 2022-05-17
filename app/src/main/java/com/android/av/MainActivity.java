@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button bt_go_to_system_camera;
     private Button bt_go_to_system_gallery;
     private Button bt_go_to_custom_camera;
+    private Button bt_go_to_opengl_es;
 
     private int permissionGranted = 1;
 
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.go_to_system_camera:
-                Init();
+                goSystemCamera();
 
                 break;
             default:
@@ -168,7 +169,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void Init() {
+
+    private void goSystemCamera() {
         picFile = new File(FileUtil.picFilePath);
         intentForCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //android 7.0 以上应用私有目录被限制访问
@@ -188,9 +190,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(intentForCamera, Utils.REQUEST_CODE_FOR_SYSTEM_CAMERA);
     }
 
-    private void goSystemCamera() {
-
-    }
 
     private void initListener() {
         bt_go_to_custom_camera.setOnClickListener(this);
