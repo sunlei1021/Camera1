@@ -27,11 +27,24 @@
             android:id="@+id/go_to_custom_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="启动自定义相机"/>
+            android:text="启动自定义相机1"/>
+
+        <Button
+            android:id="@+id/go_to_custom_camera2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="启动自定义相机2"/>
+
+        <Button
+            android:id="@+id/go_to_custom_camerax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="启动自定义相机x"/>
         <ImageView
             android:id="@+id/iv_photo"
             android:layout_height="150dp"
-            android:layout_width="150dp"/>
+            android:layout_width="150dp"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </RelativeLayout>
