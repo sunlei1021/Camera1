@@ -24,7 +24,7 @@
             android:text="调用系统相册"/>
 
         <Button
-            android:id="@+id/go_to_custom_camera"
+            android:id="@+id/go_to_custom_camera1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="启动自定义相机1"/>

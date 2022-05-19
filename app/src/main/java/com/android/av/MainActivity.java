@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button bt_go_to_system_camera;
     private Button bt_go_to_system_gallery;
-    private Button bt_go_to_custom_camera;
+    private Button bt_go_to_custom_camera1;
+    private Button bt_go_to_custom_camera2;
+    private Button bt_go_to_custom_camerax;
     private Button bt_go_to_opengl_es;
     private ImageView imageView;
 
@@ -88,7 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         bt_go_to_system_camera = findViewById(R.id.go_to_system_camera);
-        bt_go_to_custom_camera = findViewById(R.id.go_to_custom_camera);
+        bt_go_to_custom_camera1 = findViewById(R.id.go_to_custom_camera1);
+        bt_go_to_custom_camera2 = findViewById(R.id.go_to_custom_camera2);
+        bt_go_to_custom_camerax = findViewById(R.id.go_to_custom_camerax);
         bt_go_to_system_gallery = findViewById(R.id.go_to_system_gallery);
         imageView = findViewById(R.id.iv_photo);
     }
@@ -162,8 +166,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.go_to_custom_camera:
+            case R.id.go_to_custom_camera1:
 
+                break;
+            case R.id.go_to_custom_camera2:
+                break;
+            case R.id.go_to_custom_camerax:
                 break;
             case R.id.go_to_system_gallery:
                 goSystemAlbum();
@@ -232,7 +240,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initListener() {
-        bt_go_to_custom_camera.setOnClickListener(this);
+        bt_go_to_custom_camera1.setOnClickListener(this);
+        bt_go_to_custom_camera2.setOnClickListener(this);
+        bt_go_to_custom_camerax.setOnClickListener(this);
         bt_go_to_system_gallery.setOnClickListener(this);
         bt_go_to_system_camera.setOnClickListener(this);
     }
