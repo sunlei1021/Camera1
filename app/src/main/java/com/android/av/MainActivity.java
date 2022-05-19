@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.android.av.utils.FileUtil;
+import com.android.av.utils.PhotoAlbumUtil;
 import com.android.av.utils.SystemUtil;
 import com.android.av.R;
 import com.android.av.utils.Utils;
@@ -111,13 +112,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (resultCode == RESULT_OK) {
                     // 正常拍照返回图片加载至ImageView
                     //使用glide 加载
-                    Glide.with(this)
-                            .load(String.valueOf(picFile)).apply(RequestOptions.noTransformation()
-                            .override(imageView.getWidth(),imageView.getHeight())
-                            .error(R.drawable.ic_launcher_background)).into(imageView);
+                    loadPicFromCamera();
 
                     //直接加载
 //                    loadPicDirect();
+                }
+
+                break;
+            case Utils.REQUEST_CODE_FOR_SYSTEM_ALBUM:
+                if (resultCode == RESULT_OK) {
+                    //相册正常返回加载至ImageView
+                    loadPicFromAlbum(data);
                 }
         }
     }
@@ -161,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.go_to_system_gallery:
+                goSystemAlbum();
 
                 break;
             case R.id.go_to_system_camera:
@@ -217,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(intentForCamera, Utils.REQUEST_CODE_FOR_SYSTEM_CAMERA);
     }
 
+    private void goSystemAlbum() {
+        Intent intent = new Intent();
+        //设置Intent.ACTION_PICK
+        intent.setAction(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent,Utils.REQUEST_CODE_FOR_SYSTEM_ALBUM);
+    }
 
     private void initListener() {
         bt_go_to_custom_camera.setOnClickListener(this);
@@ -227,5 +240,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void loadPicDirect() {
         Bitmap bitmap = BitmapFactory.decodeFile(picFile.getAbsolutePath());
         imageView.setImageBitmap(bitmap);
+    }
+
+    private void loadPicFromCamera() {
+        Glide.with(this)
+                .load(String.valueOf(picFile)).apply(RequestOptions.noTransformation()
+                .override(imageView.getWidth(),imageView.getHeight())
+                .error(R.drawable.ic_launcher_background)).into(imageView);
+    }
+
+    private void loadPicFromAlbum(Intent data) {
+        String path = PhotoAlbumUtil.getRealPathFromUri(this,data.getData());
+        Glide.with(this)
+                .load(path).apply(RequestOptions.noTransformation()
+                .override(imageView.getWidth(),imageView.getHeight())
+                .error(R.drawable.ic_launcher_background)).into(imageView);
     }
 }
