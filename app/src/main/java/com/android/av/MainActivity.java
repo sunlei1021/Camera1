@@ -11,6 +11,8 @@ import androidx.core.content.FileProvider;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
@@ -21,13 +23,17 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.android.av.utils.FileUtil;
 import com.android.av.utils.SystemUtil;
 import com.android.av.R;
 import com.android.av.utils.Utils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback, Camera.PreviewCallback {
 
@@ -42,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button bt_go_to_system_gallery;
     private Button bt_go_to_custom_camera;
     private Button bt_go_to_opengl_es;
+    private ImageView imageView;
 
     private int permissionGranted = 1;
 
@@ -49,7 +56,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String[] permissions = {
             "android.permission.CAMERA",
             "android.permission.RECORD_AUDIO",
-            "android.permission.WRITE_EXTERNAL_STORAGE"};
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_EXTERNAL_STORAGE"};
 
     //拍照照片的路径
     private File picFile;
@@ -57,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //
     private Intent intentForCamera;
 
-    private Uri uri;
+    private Uri imageUri;
 
     private final String TAG = "MainActivityAV";
 
@@ -81,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_go_to_system_camera = findViewById(R.id.go_to_system_camera);
         bt_go_to_custom_camera = findViewById(R.id.go_to_custom_camera);
         bt_go_to_system_gallery = findViewById(R.id.go_to_system_gallery);
+        imageView = findViewById(R.id.iv_photo);
     }
 
     private boolean checkPermission(String [] permissions) {
@@ -94,8 +103,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.e(TAG, "onActivityResult requestCode: " + requestCode );
+        Log.e(TAG, "onActivityResult requestCode: " + requestCode
+                + ", resultCode: " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Utils.REQUEST_CODE_FOR_SYSTEM_CAMERA:
+                if (resultCode == RESULT_OK) {
+                    // 正常拍照返回图片加载至ImageView
+                    //使用glide 加载
+                    Glide.with(this)
+                            .load(String.valueOf(picFile)).apply(RequestOptions.noTransformation()
+                            .override(imageView.getWidth(),imageView.getHeight())
+                            .error(R.drawable.ic_launcher_background)).into(imageView);
+
+                    //直接加载
+//                    loadPicDirect();
+                }
+        }
     }
 
     @Override
@@ -141,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.go_to_system_camera:
                 goSystemCamera();
-
                 break;
             default:
                 break;
@@ -171,21 +194,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void goSystemCamera() {
-        picFile = new File(FileUtil.picFilePath);
+
+        picFile = FileUtil.saveFile(this);
         intentForCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //android 7.0 以上应用私有目录被限制访问
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ) {
-            uri = FileProvider.getUriForFile(this,
-                    SystemUtil.getPackageName(getApplicationContext()) + ".fileprovider"
+            imageUri = FileProvider.getUriForFile(this,getPackageName() + ".fileprovider"
                     ,picFile);
             intentForCamera.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
         } else {
-            uri = Uri.fromFile(picFile);
+            imageUri = Uri.fromFile(picFile);
         }
 
 
+        Log.e(TAG, "goSystemCamera imageUri : " + imageUri.toString());
         //指定ACTION为MediaStore.EXTRA_OUTPUT
-        intentForCamera.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+        intentForCamera.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+        intentForCamera.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intentForCamera.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         //请求码赋值为1
         startActivityForResult(intentForCamera, Utils.REQUEST_CODE_FOR_SYSTEM_CAMERA);
     }
@@ -195,5 +222,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_go_to_custom_camera.setOnClickListener(this);
         bt_go_to_system_gallery.setOnClickListener(this);
         bt_go_to_system_camera.setOnClickListener(this);
+    }
+
+    private void loadPicDirect() {
+        Bitmap bitmap = BitmapFactory.decodeFile(picFile.getAbsolutePath());
+        imageView.setImageBitmap(bitmap);
     }
 }
