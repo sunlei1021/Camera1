@@ -259,4 +259,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .error(R.drawable.ic_launcher_background)).into(imageView);
         imageView.setVisibility(View.VISIBLE);
     }
+
+    private void loadPicFromCamera() {
+        Glide.with(this)
+                .load(String.valueOf(picFile)).apply(RequestOptions.noTransformation()
+                .override(imageView.getWidth(),imageView.getHeight())
+                .error(R.drawable.ic_launcher_background)).into(imageView);
+    }
+
+    private void loadPicFromAlbum(Intent data) {
+        String path = PhotoAlbumUtil.getRealPathFromUri(this,data.getData());
+        Glide.with(this)
+                .load(path).apply(RequestOptions.noTransformation()
+                .override(imageView.getWidth(),imageView.getHeight())
+                .error(R.drawable.ic_launcher_background)).into(imageView);
+    }
 }
